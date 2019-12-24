@@ -11,10 +11,10 @@
         <Label Content="Имя" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
         <Label Content="Отчество" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
         <Label Content="Отдел" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="textLastName" HorizontalAlignment="Left" Margin="99,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172"/>
-        <TextBox x:Name="textFirstName" HorizontalAlignment="Left" Margin="99,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172"/>
-        <TextBox x:Name="textMiddleName" HorizontalAlignment="Left" Margin="99,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172"/>
-        <ComboBox x:Name="comboDepartment" HorizontalAlignment="Left" Margin="99,107,0,0" VerticalAlignment="Top" Width="172"/>
+        <TextBox x:Name="textLastName" HorizontalAlignment="Left" Margin="99,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172" Text="{Binding Lastname}"/>
+        <TextBox x:Name="textFirstName" HorizontalAlignment="Left" Margin="99,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172" Text="{Binding Firstname}"/>
+        <TextBox x:Name="textMiddleName" HorizontalAlignment="Left" Margin="99,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172" Text="{Binding Middlename}"/>
+        <ComboBox x:Name="comboDepartment" HorizontalAlignment="Left" Margin="99,107,0,0" VerticalAlignment="Top" Width="172" SelectedValue="{Binding department}"/>
         <Button x:Name="buttonApply" Content="Применить" HorizontalAlignment="Left" Margin="10,149,0,0" VerticalAlignment="Top" Width="80" Visibility="Hidden" />
         <Button Content="Отмена" HorizontalAlignment="Left" Margin="228,149,0,0" VerticalAlignment="Top" Width="80" IsDefault="True" IsCancel="True"/>
 
