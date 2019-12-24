@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using WpfApp.domain;
 using WpfApp.repository;
@@ -11,17 +12,15 @@ namespace WpfApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly IDepartmentRepository departmentRepository;
-        private readonly IEmployeeRepository employeeRepository;
+        private readonly IDepartmentRepository departmentRepository = new DepartmentRepository();
+        private readonly IEmployeeRepository employeeRepository = new EmployeeRepository();
+
+        public ReadOnlyObservableCollection<Employee> Employees => employeeRepository.All();
+        public ReadOnlyObservableCollection<Department> Departments => departmentRepository.All();
         public MainWindow()
-        {
-            departmentRepository = new DepartmentRepository();
-            employeeRepository = new EmployeeRepository();
-
+        {           
             InitializeComponent();
-
-            listEmployees.ItemsSource = employeeRepository.All();
-            listDepartments.ItemsSource = departmentRepository.All();
+            DataContext = this;
 
             listDepartments.MouseDoubleClick += OnDepartmentDblClick;
             buttonAddDepartment.Click += OnAddDepartmentClick;
@@ -32,7 +31,6 @@ namespace WpfApp
             buttonRemoveEmployee.Click += OnRemoveEmployeeClick;
 
             FillData();
-
         }
 
         private void OnRemoveEmployeeClick(object sender, RoutedEventArgs e)
@@ -58,10 +56,7 @@ namespace WpfApp
             Employee selectedItem = (Employee)listEmployees.SelectedItem;
             if (selectedItem != null)
             {
-                if (EmployeeEdit.Edit(selectedItem,departmentRepository.All()))
-                {                    
-                    listEmployees.Items.Refresh();
-                }
+                EmployeeEdit.Edit(selectedItem, departmentRepository.All());
             }
         }
 
@@ -93,11 +88,7 @@ namespace WpfApp
             Department selectedItem = (Department)listDepartments.SelectedItem;
             if (selectedItem != null)
             {
-                if (DepartmentEdit.Edit(selectedItem))
-                {
-                    listDepartments.Items.Refresh();
-                    listEmployees.Items.Refresh();
-                }
+                DepartmentEdit.Edit(selectedItem);
             }
         }
 

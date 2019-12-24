@@ -13,6 +13,9 @@ namespace WpfApp.view
     {
         private readonly ICollection<Department> departments;
         private readonly Employee employee;
+
+        public ICollection<Department> Departments => departments;
+
         public EmployeeEdit(ICollection<Department> departments) : this(new Employee(), departments)
         {
 
@@ -23,17 +26,8 @@ namespace WpfApp.view
             this.employee = employee;
             this.departments = departments;
             InitializeComponent();
-
+            this.DataContext = employee;
             comboDepartment.ItemsSource = departments;
-            textFirstName.Text = employee.Firstname;
-            textLastName.Text = employee.Lastname;
-            textMiddleName.Text = employee.Middlename;
-            if (employee.department != null)
-            {
-                comboDepartment.SelectedItem = employee.department;
-            }
-            else
-                comboDepartment.SelectedIndex = 0;
 
             textLastName.TextChanged += LastNameChanged;
 
