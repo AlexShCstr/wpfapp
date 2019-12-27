@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using WpfApp.domain;
+﻿using System.Data.Entity;
 
 namespace WpfApp.repository
 {
-    class EmployeeRepository : AbstractListBaseRepository<domain.Employee>, IEmployeeRepository
+    class EmployeeRepository : AbstractDBRepository<Employee>, IEmployeeRepository
     {
-        public bool hasEmployeesInDepartment(Department department)
+        public EmployeeRepository(IEmployeeCollectionAccessor collectionAccessor, DbContext dbContext) : base(collectionAccessor.GetEmployees(), dbContext)
         {
-            return All().ToList().Find(employee => employee.department == department) != null;
-        }
+
+        }       
+                
+
     }
 }

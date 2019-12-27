@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using WpfApp.domain;
 
 namespace WpfApp.view
 {
@@ -13,6 +11,9 @@ namespace WpfApp.view
     {
         private readonly ICollection<Department> departments;
         private readonly Employee employee;
+
+        public ICollection<Department> Departments => departments;
+
         public EmployeeEdit(ICollection<Department> departments) : this(new Employee(), departments)
         {
 
@@ -23,17 +24,8 @@ namespace WpfApp.view
             this.employee = employee;
             this.departments = departments;
             InitializeComponent();
-
+            this.DataContext = employee;
             comboDepartment.ItemsSource = departments;
-            textFirstName.Text = employee.Firstname;
-            textLastName.Text = employee.Lastname;
-            textMiddleName.Text = employee.Middlename;
-            if (employee.department != null)
-            {
-                comboDepartment.SelectedItem = employee.department;
-            }
-            else
-                comboDepartment.SelectedIndex = 0;
 
             textLastName.TextChanged += LastNameChanged;
 
@@ -83,10 +75,10 @@ namespace WpfApp.view
 
         private static void FillEmployee(EmployeeEdit employeeEdit, Employee employee)
         {
-            employee.Firstname = employeeEdit.textFirstName.Text;
-            employee.Lastname = employeeEdit.textLastName.Text;
-            employee.Middlename = employeeEdit.textMiddleName.Text;
-            employee.department = (Department)employeeEdit.comboDepartment.SelectedItem;
+            employee.FIRSTNAME = employeeEdit.textFirstName.Text;
+            employee.LASTNAME = employeeEdit.textLastName.Text;
+            employee.Midllename = employeeEdit.textMiddleName.Text;
+            employee.Department = (Department)employeeEdit.comboDepartment.SelectedItem;
         }
 
     }
