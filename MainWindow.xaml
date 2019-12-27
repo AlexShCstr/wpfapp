@@ -26,16 +26,14 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="Добавить" Name="buttonAddEmployee" Height="24" Grid.ColumnSpan="2" Margin="0,4,0,4" />
                     <Button Content="Удалить" Name="buttonRemoveEmployee" Grid.Column="2" Height="24" Margin="0,4,0,4" />
-                    <ListView Name="listEmployees"  Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding Employees}">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Фамилия" Width="150" DisplayMemberBinding="{Binding Lastname}"/>
-                                <GridViewColumn Header="Имя" Width="150" DisplayMemberBinding="{Binding Firstname}"/>
-                                <GridViewColumn Header="Отчество" Width="150" DisplayMemberBinding="{Binding Middlename}"/>
-                                <GridViewColumn Header="Отдел" Width="300" DisplayMemberBinding="{Binding department}"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>                   
+                    <DataGrid Name="listEmployees"  Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding Employees}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Фамилия" Width="150" Binding="{Binding LASTNAME}"/>
+                            <DataGridTextColumn Header="Имя" Width="150" Binding="{Binding FIRSTNAME}"/>
+                            <DataGridTextColumn Header="Отчество" Width="150" Binding="{Binding Midllename}"/>
+                            <DataGridTextColumn Header="Отдел" Width="300" Binding="{Binding Department}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Header="Департаменты">
@@ -51,13 +49,11 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="Добавить" Name="buttonAddDepartment" Height="24" />
                     <Button Content="Удалить" Name="buttonRemoveDepartment" Grid.Column="1" Height="24" />
-                    <ListView Name="listDepartments" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Departments}">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Наименование" Width="300" DisplayMemberBinding="{Binding Name}"/>                               
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                    <DataGrid Name="listDepartments" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Departments}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Наименование" Width="300" Binding="{Binding NAME}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
         </TabControl>

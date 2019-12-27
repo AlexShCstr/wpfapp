@@ -1,7 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Data.Entity;
 using System.Windows;
 using System.Windows.Input;
-using WpfApp.domain;
 using WpfApp.repository;
 using WpfApp.view;
 
@@ -12,13 +13,18 @@ namespace WpfApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly IDepartmentRepository departmentRepository = new DepartmentRepository();
-        private readonly IEmployeeRepository employeeRepository = new EmployeeRepository();
+        private readonly DBNameEntities dBNameEntities = new DBNameEntities();
+        private readonly IDepartmentRepository departmentRepository;
+        private readonly IEmployeeRepository employeeRepository;
 
-        public ReadOnlyObservableCollection<Employee> Employees => employeeRepository.All();
-        public ReadOnlyObservableCollection<Department> Departments => departmentRepository.All();
+        public BindingList<Employee> Employees => dBNameEntities.Employee.Local.ToBindingList();
+        public BindingList<Department> Departments => dBNameEntities.Department.Local.ToBindingList();
         public MainWindow()
-        {           
+        {
+            dBNameEntities.Employee.Load();
+            dBNameEntities.Department.Load();
+            departmentRepository = new DepartmentRepository(dBNameEntities, dBNameEntities);
+            employeeRepository = new EmployeeRepository(dBNameEntities, dBNameEntities);
             InitializeComponent();
             DataContext = this;
 
@@ -44,7 +50,7 @@ namespace WpfApp
 
         private void OnAddEmployeeClick(object sender, RoutedEventArgs e)
         {
-            Employee employee = EmployeeEdit.Create(departmentRepository.All());
+            Employee employee = EmployeeEdit.Create(Departments);
             if (employee != null)
             {
                 employeeRepository.Insert(employee);
@@ -56,7 +62,7 @@ namespace WpfApp
             Employee selectedItem = (Employee)listEmployees.SelectedItem;
             if (selectedItem != null)
             {
-                EmployeeEdit.Edit(selectedItem, departmentRepository.All());
+                EmployeeEdit.Edit(selectedItem, Departments);
             }
         }
 
@@ -65,12 +71,7 @@ namespace WpfApp
             Department selectedItem = (Department)listDepartments.SelectedItem;
             if (selectedItem != null)
             {
-                if (employeeRepository.hasEmployeesInDepartment(selectedItem))
-                {
-                    MessageBox.Show("Нельзя удалить отдел с сотрудниками");
-                }
-                else
-                    departmentRepository.Delete(selectedItem);
+                departmentRepository.Delete(selectedItem);
             }
         }
 
@@ -94,17 +95,19 @@ namespace WpfApp
 
         private void FillData()
         {
-            departmentRepository.Insert(new domain.Department("Бухгалтерия"));
-            departmentRepository.Insert(new domain.Department("Склад"));
-            departmentRepository.Insert(new domain.Department("Гараж"));
-            departmentRepository.Insert(new domain.Department("Кадры"));
+            if (Departments.Count > 0 || Employees.Count > 0) return;
 
-            employeeRepository.Insert(new domain.Employee("Иван", "Иванов", "Иванович")).department = departmentRepository.FindById(1);
-            employeeRepository.Insert(new domain.Employee("Иван", "Петров", "Петрович")).department = departmentRepository.FindById(2);
-            employeeRepository.Insert(new domain.Employee("Пётр", "Иванов", "Романовия")).department = departmentRepository.FindById(3);
-            employeeRepository.Insert(new domain.Employee("Сергей", "Иванов", "Сергеевич")).department = departmentRepository.FindById(1);
-            employeeRepository.Insert(new domain.Employee("Андрей", "Андреев", "Романович")).department = departmentRepository.FindById(4);
-            employeeRepository.Insert(new domain.Employee("Игорь", "Комаров", "Иванович")).department = departmentRepository.FindById(1);
+            Department department1 = departmentRepository.Insert(new Department() { NAME = "Бухгалтерия" });
+            Department department2 = departmentRepository.Insert(new Department() { NAME = "Склад" });
+            Department department3 = departmentRepository.Insert(new Department() { NAME = "Гараж" });
+            Department department4 = departmentRepository.Insert(new Department() { NAME = "Кадры" });
+
+            employeeRepository.Insert(new Employee() {FIRSTNAME= "Иван",LASTNAME= "Иванов", Midllename="Иванович" ,Department=department1});
+            employeeRepository.Insert(new Employee() { FIRSTNAME = "Иван", LASTNAME = "Петров", Midllename = "Петрович", Department = department2 });
+            employeeRepository.Insert(new Employee() { FIRSTNAME = "Пётр", LASTNAME = "Иванов", Midllename = "Романовия", Department = department3 });
+            employeeRepository.Insert(new Employee() { FIRSTNAME = "Сергей", LASTNAME = "Иванов", Midllename = "Сергеевич", Department = department4 });
+            employeeRepository.Insert(new Employee() { FIRSTNAME = "Андрей", LASTNAME = "Андреев", Midllename = "Романович", Department = department1 });
+            employeeRepository.Insert(new Employee() { FIRSTNAME = "Игорь", LASTNAME = "Комаров", Midllename = "Иванович", Department = department2 });
         }
     }
 }

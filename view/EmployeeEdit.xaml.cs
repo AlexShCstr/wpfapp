@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using WpfApp.domain;
 
 namespace WpfApp.view
 {
@@ -77,10 +75,10 @@ namespace WpfApp.view
 
         private static void FillEmployee(EmployeeEdit employeeEdit, Employee employee)
         {
-            employee.Firstname = employeeEdit.textFirstName.Text;
-            employee.Lastname = employeeEdit.textLastName.Text;
-            employee.Middlename = employeeEdit.textMiddleName.Text;
-            employee.department = (Department)employeeEdit.comboDepartment.SelectedItem;
+            employee.FIRSTNAME = employeeEdit.textFirstName.Text;
+            employee.LASTNAME = employeeEdit.textLastName.Text;
+            employee.Midllename = employeeEdit.textMiddleName.Text;
+            employee.Department = (Department)employeeEdit.comboDepartment.SelectedItem;
         }
 
     }

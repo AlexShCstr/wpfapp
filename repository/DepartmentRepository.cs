@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Data.Entity;
 
 namespace WpfApp.repository
 {
-    class DepartmentRepository:AbstractListBaseRepository<domain.Department>,IDepartmentRepository
-    {
+    class DepartmentRepository : AbstractDBRepository<Department>, IDepartmentRepository
+    {       
+        public DepartmentRepository(IDepartmentCollectionAccessor collectionAccessor, DbContext dbContext) : base(collectionAccessor.GetDepartments(), dbContext)
+        {
+
+        }
     }
 }
