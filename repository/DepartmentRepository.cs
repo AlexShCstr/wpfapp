@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Data.Entity;
+using System.Net.Http;
 
 namespace WpfApp.repository
 {
-    class DepartmentRepository:AbstractListBaseRepository<domain.Department>,IDepartmentRepository
-    {
+    class DepartmentRepository : AbstractWebApiRepository<Department>, IDepartmentRepository
+    {       
+        public DepartmentRepository(HttpClient client) : base(client)
+        {
+
+        }
+
+        internal override string GetCollectionUrlString()
+        {
+            return "api/departments";
+        }
     }
 }

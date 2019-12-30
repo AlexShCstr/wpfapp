@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Input;
-using WpfApp.domain;
+﻿using System.Windows;
 
 namespace WpfApp.view
 {
@@ -12,16 +9,19 @@ namespace WpfApp.view
     {
 
         private Department department;
-        public DepartmentEdit(): this(new Department(""))
+
+        public Department Department { get => department; set => department = value; }
+
+        public DepartmentEdit(): this(new Department())
         {
             
         }
 
         public DepartmentEdit(Department department)
         {
-            this.department = department;
+            this.Department = department;
             InitializeComponent();
-            textName.Text = department.Name;
+            this.DataContext = department;
             buttonApply.Click += OnApplyClick;
         }
 
@@ -36,7 +36,7 @@ namespace WpfApp.view
             DepartmentEdit departmentEdit = new DepartmentEdit(department);
             if (departmentEdit.ShowDialog().GetValueOrDefault(false))
             {
-                department.Name = departmentEdit.textName.Text;
+                department.NAME = departmentEdit.textName.Text;
                 return true;
             }
             return false;
@@ -47,8 +47,8 @@ namespace WpfApp.view
             DepartmentEdit departmentEdit = new DepartmentEdit();
             if (departmentEdit.ShowDialog().GetValueOrDefault(false))
             {
-                departmentEdit.department.Name = departmentEdit.textName.Text;
-                return departmentEdit.department;
+                departmentEdit.Department.NAME = departmentEdit.textName.Text;
+                return departmentEdit.Department;
             }
             return null;
         }

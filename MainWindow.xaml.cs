@@ -1,6 +1,13 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Data.Entity;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
-using WpfApp.domain;
 using WpfApp.repository;
 using WpfApp.view;
 
@@ -13,26 +20,34 @@ namespace WpfApp
     {
         private readonly IDepartmentRepository departmentRepository;
         private readonly IEmployeeRepository employeeRepository;
+        static HttpClient client = new HttpClient();
+
         public MainWindow()
         {
-            departmentRepository = new DepartmentRepository();
-            employeeRepository = new EmployeeRepository();
-
             InitializeComponent();
+            client.BaseAddress = new Uri("https://localhost:44362/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            listEmployees.ItemsSource = employeeRepository.All();
-            listDepartments.ItemsSource = departmentRepository.All();
+            departmentRepository = new DepartmentRepository(client);
+            employeeRepository = new EmployeeRepository(client);
+
+            FillData();
 
             listDepartments.MouseDoubleClick += OnDepartmentDblClick;
             buttonAddDepartment.Click += OnAddDepartmentClick;
             buttonRemoveDepartment.Click += OnRemoveDepartmentClick;
-
+            
             listEmployees.MouseDoubleClick += OnEmployeeDblClick;
             buttonAddEmployee.Click += OnAddEmployeeClick;
             buttonRemoveEmployee.Click += OnRemoveEmployeeClick;
 
-            FillData();
+        }
 
+        private async void FillData()
+        {
+            listDepartments.ItemsSource = await departmentRepository.All();
+            listEmployees.ItemsSource = await employeeRepository.All();
         }
 
         private void OnRemoveEmployeeClick(object sender, RoutedEventArgs e)
@@ -44,24 +59,24 @@ namespace WpfApp
             }
         }
 
-        private void OnAddEmployeeClick(object sender, RoutedEventArgs e)
+        private async void OnAddEmployeeClick(object sender, RoutedEventArgs e)
         {
-            Employee employee = EmployeeEdit.Create(departmentRepository.All());
+            ICollection<Department> Departments = (ICollection<Department>)await departmentRepository.All();
+            Employee employee = EmployeeEdit.Create(Departments);
             if (employee != null)
             {
                 employeeRepository.Insert(employee);
             }
         }
 
-        private void OnEmployeeDblClick(object sender, MouseButtonEventArgs e)
+
+        private async void OnEmployeeDblClick(object sender, MouseButtonEventArgs e)
         {
             Employee selectedItem = (Employee)listEmployees.SelectedItem;
             if (selectedItem != null)
             {
-                if (EmployeeEdit.Edit(selectedItem,departmentRepository.All()))
-                {                    
-                    listEmployees.Items.Refresh();
-                }
+                ICollection<Department> Departments = (ICollection<Department>)await departmentRepository.All();
+                EmployeeEdit.Edit(selectedItem, (ICollection<Department>)Departments);
             }
         }
 
@@ -70,12 +85,7 @@ namespace WpfApp
             Department selectedItem = (Department)listDepartments.SelectedItem;
             if (selectedItem != null)
             {
-                if (employeeRepository.hasEmployeesInDepartment(selectedItem))
-                {
-                    MessageBox.Show("Нельзя удалить отдел с сотрудниками");
-                }
-                else
-                    departmentRepository.Delete(selectedItem);
+                departmentRepository.Delete(selectedItem);
             }
         }
 
@@ -93,27 +103,9 @@ namespace WpfApp
             Department selectedItem = (Department)listDepartments.SelectedItem;
             if (selectedItem != null)
             {
-                if (DepartmentEdit.Edit(selectedItem))
-                {
-                    listDepartments.Items.Refresh();
-                    listEmployees.Items.Refresh();
-                }
+                DepartmentEdit.Edit(selectedItem);
             }
         }
 
-        private void FillData()
-        {
-            departmentRepository.Insert(new domain.Department("Бухгалтерия"));
-            departmentRepository.Insert(new domain.Department("Склад"));
-            departmentRepository.Insert(new domain.Department("Гараж"));
-            departmentRepository.Insert(new domain.Department("Кадры"));
-
-            employeeRepository.Insert(new domain.Employee("Иван", "Иванов", "Иванович")).department = departmentRepository.FindById(1);
-            employeeRepository.Insert(new domain.Employee("Иван", "Петров", "Петрович")).department = departmentRepository.FindById(2);
-            employeeRepository.Insert(new domain.Employee("Пётр", "Иванов", "Романовия")).department = departmentRepository.FindById(3);
-            employeeRepository.Insert(new domain.Employee("Сергей", "Иванов", "Сергеевич")).department = departmentRepository.FindById(1);
-            employeeRepository.Insert(new domain.Employee("Андрей", "Андреев", "Романович")).department = departmentRepository.FindById(4);
-            employeeRepository.Insert(new domain.Employee("Игорь", "Комаров", "Иванович")).department = departmentRepository.FindById(1);
-        }
     }
 }

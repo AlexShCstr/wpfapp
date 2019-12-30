@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using WpfApp.domain;
+﻿using System.Data.Entity;
+using System.Net.Http;
 
 namespace WpfApp.repository
 {
-    class EmployeeRepository : AbstractListBaseRepository<domain.Employee>, IEmployeeRepository
+    class EmployeeRepository : AbstractWebApiRepository<Employee>, IEmployeeRepository
     {
-        public bool hasEmployeesInDepartment(Department department)
+        public EmployeeRepository(HttpClient client) : base(client)
         {
-            return All().ToList().Find(employee => employee.department == department) != null;
+
+        }
+
+        internal override string GetCollectionUrlString()
+        {
+            return "api/employees";
         }
     }
 }
