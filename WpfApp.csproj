@@ -111,7 +111,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="repository\AbtractDBRepository.cs" />
+    <Compile Include="repository\AbstractWebApiRepository.cs" />
     <Compile Include="repository\EmployeeRepository.cs" />
     <Compile Include="repository\DepartmentRepository.cs" />
     <Compile Include="repository\IDepartmentRepository.cs" />
@@ -147,6 +147,9 @@
   <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.2.0" />
     <PackageReference Include="EntityFramework.ru" Version="6.2.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client">
+      <Version>5.2.7</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />

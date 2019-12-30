@@ -26,7 +26,7 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="Добавить" Name="buttonAddEmployee" Height="24" Grid.ColumnSpan="2" Margin="0,4,0,4" />
                     <Button Content="Удалить" Name="buttonRemoveEmployee" Grid.Column="2" Height="24" Margin="0,4,0,4" />
-                    <DataGrid Name="listEmployees"  Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding Employees}" AutoGenerateColumns="False">
+                    <DataGrid Name="listEmployees"  Grid.Row="1" Grid.ColumnSpan="3" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Фамилия" Width="150" Binding="{Binding LASTNAME}"/>
                             <DataGridTextColumn Header="Имя" Width="150" Binding="{Binding FIRSTNAME}"/>
@@ -49,7 +49,7 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="Добавить" Name="buttonAddDepartment" Height="24" />
                     <Button Content="Удалить" Name="buttonRemoveDepartment" Grid.Column="1" Height="24" />
-                    <DataGrid Name="listDepartments" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Departments}" AutoGenerateColumns="False">
+                    <DataGrid Name="listDepartments" Grid.Row="1" Grid.ColumnSpan="2" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Наименование" Width="300" Binding="{Binding NAME}"/>
                         </DataGrid.Columns>

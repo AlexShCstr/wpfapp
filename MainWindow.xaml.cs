@@ -1,6 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using WpfApp.repository;
@@ -13,30 +18,36 @@ namespace WpfApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly DBNameEntities dBNameEntities = new DBNameEntities();
         private readonly IDepartmentRepository departmentRepository;
         private readonly IEmployeeRepository employeeRepository;
+        static HttpClient client = new HttpClient();
 
-        public BindingList<Employee> Employees => dBNameEntities.Employee.Local.ToBindingList();
-        public BindingList<Department> Departments => dBNameEntities.Department.Local.ToBindingList();
         public MainWindow()
         {
-            dBNameEntities.Employee.Load();
-            dBNameEntities.Department.Load();
-            departmentRepository = new DepartmentRepository(dBNameEntities, dBNameEntities);
-            employeeRepository = new EmployeeRepository(dBNameEntities, dBNameEntities);
             InitializeComponent();
-            DataContext = this;
+            client.BaseAddress = new Uri("https://localhost:44362/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            departmentRepository = new DepartmentRepository(client);
+            employeeRepository = new EmployeeRepository(client);
+
+            FillData();
 
             listDepartments.MouseDoubleClick += OnDepartmentDblClick;
             buttonAddDepartment.Click += OnAddDepartmentClick;
             buttonRemoveDepartment.Click += OnRemoveDepartmentClick;
-
+            
             listEmployees.MouseDoubleClick += OnEmployeeDblClick;
             buttonAddEmployee.Click += OnAddEmployeeClick;
             buttonRemoveEmployee.Click += OnRemoveEmployeeClick;
 
-            FillData();
+        }
+
+        private async void FillData()
+        {
+            listDepartments.ItemsSource = await departmentRepository.All();
+            listEmployees.ItemsSource = await employeeRepository.All();
         }
 
         private void OnRemoveEmployeeClick(object sender, RoutedEventArgs e)
@@ -48,8 +59,9 @@ namespace WpfApp
             }
         }
 
-        private void OnAddEmployeeClick(object sender, RoutedEventArgs e)
+        private async void OnAddEmployeeClick(object sender, RoutedEventArgs e)
         {
+            ICollection<Department> Departments = (ICollection<Department>)await departmentRepository.All();
             Employee employee = EmployeeEdit.Create(Departments);
             if (employee != null)
             {
@@ -57,12 +69,14 @@ namespace WpfApp
             }
         }
 
-        private void OnEmployeeDblClick(object sender, MouseButtonEventArgs e)
+
+        private async void OnEmployeeDblClick(object sender, MouseButtonEventArgs e)
         {
             Employee selectedItem = (Employee)listEmployees.SelectedItem;
             if (selectedItem != null)
             {
-                EmployeeEdit.Edit(selectedItem, Departments);
+                ICollection<Department> Departments = (ICollection<Department>)await departmentRepository.All();
+                EmployeeEdit.Edit(selectedItem, (ICollection<Department>)Departments);
             }
         }
 
@@ -93,21 +107,5 @@ namespace WpfApp
             }
         }
 
-        private void FillData()
-        {
-            if (Departments.Count > 0 || Employees.Count > 0) return;
-
-            Department department1 = departmentRepository.Insert(new Department() { NAME = "Бухгалтерия" });
-            Department department2 = departmentRepository.Insert(new Department() { NAME = "Склад" });
-            Department department3 = departmentRepository.Insert(new Department() { NAME = "Гараж" });
-            Department department4 = departmentRepository.Insert(new Department() { NAME = "Кадры" });
-
-            employeeRepository.Insert(new Employee() {FIRSTNAME= "Иван",LASTNAME= "Иванов", Midllename="Иванович" ,Department=department1});
-            employeeRepository.Insert(new Employee() { FIRSTNAME = "Иван", LASTNAME = "Петров", Midllename = "Петрович", Department = department2 });
-            employeeRepository.Insert(new Employee() { FIRSTNAME = "Пётр", LASTNAME = "Иванов", Midllename = "Романовия", Department = department3 });
-            employeeRepository.Insert(new Employee() { FIRSTNAME = "Сергей", LASTNAME = "Иванов", Midllename = "Сергеевич", Department = department4 });
-            employeeRepository.Insert(new Employee() { FIRSTNAME = "Андрей", LASTNAME = "Андреев", Midllename = "Романович", Department = department1 });
-            employeeRepository.Insert(new Employee() { FIRSTNAME = "Игорь", LASTNAME = "Комаров", Midllename = "Иванович", Department = department2 });
-        }
     }
 }

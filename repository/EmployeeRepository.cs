@@ -1,14 +1,18 @@
 ﻿using System.Data.Entity;
+using System.Net.Http;
 
 namespace WpfApp.repository
 {
-    class EmployeeRepository : AbstractDBRepository<Employee>, IEmployeeRepository
+    class EmployeeRepository : AbstractWebApiRepository<Employee>, IEmployeeRepository
     {
-        public EmployeeRepository(IEmployeeCollectionAccessor collectionAccessor, DbContext dbContext) : base(collectionAccessor.GetEmployees(), dbContext)
+        public EmployeeRepository(HttpClient client) : base(client)
         {
 
-        }       
-                
+        }
 
+        internal override string GetCollectionUrlString()
+        {
+            return "api/employees";
+        }
     }
 }
